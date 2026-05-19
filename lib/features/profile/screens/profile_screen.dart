@@ -49,8 +49,21 @@ class ProfileScreen extends ConsumerWidget {
                       ),
                     ),
                     ElevatedButton(
-                      onPressed: () {
-                        // TODO: open edit profile flow
+                      onPressed: () async {
+                        await showModalBottomSheet<void>(
+                          context: context,
+                          isScrollControlled: true,
+                          builder: (ctx) {
+                            return Padding(
+                              padding: EdgeInsets.only(
+                                bottom: MediaQuery.of(ctx).viewInsets.bottom,
+                              ),
+                              child: _EditProfileForm(user: user),
+                            );
+                          },
+                        );
+                        // After modal closes, refresh provider to show updated data.
+                        ref.invalidate(userProvider);
                       },
                       child: const Text('Edit'),
                     ),
@@ -103,5 +116,131 @@ class ProfileScreen extends ConsumerWidget {
             ? 1
             : 0);
     return years;
+  }
+}
+
+class _EditProfileForm extends ConsumerStatefulWidget {
+  final UserModel user;
+  const _EditProfileForm({required this.user});
+
+  @override
+  ConsumerState<_EditProfileForm> createState() => _EditProfileFormState();
+}
+
+class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
+  late final TextEditingController _nameController;
+  late final TextEditingController _emailController;
+  late final TextEditingController _lifeExpController;
+  DateTime? _dob;
+
+  @override
+  void initState() {
+    super.initState();
+    _nameController = TextEditingController(text: widget.user.name);
+    _emailController = TextEditingController(text: widget.user.email);
+    _lifeExpController = TextEditingController(
+      text: widget.user.lifeExpectancyYears.toString(),
+    );
+    _dob = widget.user.dob;
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    _lifeExpController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Edit Profile',
+            style: Theme.of(context).textTheme.displayMedium,
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: _nameController,
+            decoration: const InputDecoration(labelText: 'Name'),
+          ),
+          const SizedBox(height: 8),
+          TextField(
+            controller: _emailController,
+            decoration: const InputDecoration(labelText: 'Email'),
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  _dob != null
+                      ? _dob!.toLocal().toIso8601String().split('T').first
+                      : 'DOB: Unknown',
+                ),
+              ),
+              TextButton(onPressed: _pickDob, child: const Text('Pick DOB')),
+            ],
+          ),
+          const SizedBox(height: 8),
+          TextField(
+            controller: _lifeExpController,
+            keyboardType: TextInputType.number,
+            decoration: const InputDecoration(
+              labelText: 'Life expectancy (years)',
+            ),
+          ),
+          const SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('Cancel'),
+              ),
+              const SizedBox(width: 8),
+              ElevatedButton(onPressed: _save, child: const Text('Save')),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _pickDob() async {
+    final now = DateTime.now();
+    final initial = _dob ?? DateTime(now.year - 25);
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: initial,
+      firstDate: DateTime(1900),
+      lastDate: now,
+    );
+    if (picked != null) setState(() => _dob = picked);
+  }
+
+  Future<void> _save() async {
+    final name = _nameController.text.trim();
+    final email = _emailController.text.trim();
+    final lifeExp =
+        int.tryParse(_lifeExpController.text) ??
+        widget.user.lifeExpectancyYears;
+
+    final updated = UserModel(
+      id: widget.user.id.isNotEmpty ? widget.user.id : 'anon',
+      name: name.isNotEmpty ? name : widget.user.name,
+      email: email.isNotEmpty ? email : widget.user.email,
+      dob: _dob,
+      lifeExpectancyYears: lifeExp,
+    );
+
+    await saveUser(updated);
+    // Dismiss sheet
+    if (mounted) Navigator.of(context).pop();
   }
 }

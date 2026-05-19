@@ -1,16 +1,19 @@
-import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import '../../../core/constants/app_colors.dart';
 import 'dart:ui';
 
-class LifeDetailsFormScreen extends StatefulWidget {
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/constants/app_colors.dart';
+import '../../../core/providers/user_provider.dart';
+
+class LifeDetailsFormScreen extends ConsumerStatefulWidget {
   const LifeDetailsFormScreen({super.key});
 
   @override
-  State<LifeDetailsFormScreen> createState() => _LifeDetailsFormScreenState();
+  ConsumerState<LifeDetailsFormScreen> createState() => _LifeDetailsFormScreenState();
 }
 
-class _LifeDetailsFormScreenState extends State<LifeDetailsFormScreen> {
+class _LifeDetailsFormScreenState extends ConsumerState<LifeDetailsFormScreen> {
   DateTime? _selectedDOB;
   String _selectedGender = 'Male';
   double _sleepHours = 7.0;
@@ -61,12 +64,46 @@ class _LifeDetailsFormScreenState extends State<LifeDetailsFormScreen> {
     }
   }
 
-  void _submitForm() {
-    // Here we would typically save these details to Supabase/Riverpod state
-    // and calculate the exact life expectancy based on algorithms.
+  Future<void> _submitForm() async {
+    if (_selectedDOB == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please select your date of birth')),
+      );
+      return;
+    }
 
-    // Proceed to Dashboard
-    context.go('/dashboard');
+    double expectedLifespan = 80.0;
+    if (_selectedGender == 'Female') expectedLifespan += 4;
+    if (_sleepHours >= 7 && _sleepHours <= 8.5) expectedLifespan += 2;
+    else if (_sleepHours < 5) expectedLifespan -= 3;
+    if (_stressLevel > 7) expectedLifespan -= 4;
+    else if (_stressLevel < 4) expectedLifespan += 2;
+    if (_activityLevel == 'Active' || _activityLevel == 'Very Active') expectedLifespan += 4;
+    else if (_activityLevel == 'Sedentary') expectedLifespan -= 3;
+    
+    expectedLifespan = expectedLifespan.clamp(60.0, 100.0);
+
+    final user = UserModel(
+      id: 'user_${DateTime.now().millisecondsSinceEpoch}',
+      name: 'Seeker',
+      email: '',
+      dob: _selectedDOB,
+      lifeExpectancyYears: expectedLifespan.round(),
+    );
+
+    try {
+      await saveUser(user);
+      // Invalidate the provider so the dashboard refreshes
+      ref.invalidate(userProvider);
+      
+      if (mounted) context.go('/dashboard');
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error saving profile: $e')),
+        );
+      }
+    }
   }
 
   @override
