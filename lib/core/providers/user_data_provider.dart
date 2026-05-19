@@ -1,8 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../models/user_data.dart';
 
-class UserDataNotifier extends StateNotifier<UserData> {
-  UserDataNotifier() : super(UserData(dob: DateTime(2000, 1, 1))); // Default dob for guest
+class UserDataNotifier extends Notifier<UserData> {
+  @override
+  UserData build() {
+    return UserData(dob: DateTime(2000, 1, 1)); // Default dob for guest
+  }
 
   void updateUserData(UserData data) {
     // Basic logic to modify expected lifespan based on health factors.
@@ -40,6 +43,6 @@ class UserDataNotifier extends StateNotifier<UserData> {
   }
 }
 
-final userDataProvider = StateNotifierProvider<UserDataNotifier, UserData>((ref) {
+final userDataProvider = NotifierProvider<UserDataNotifier, UserData>(() {
   return UserDataNotifier();
 });

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/providers/user_provider.dart';
+import '../../../core/providers/user_data_provider.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -9,6 +10,7 @@ class ProfileScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final asyncUser = ref.watch(userProvider);
+    final userData = ref.watch(userDataProvider);
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -130,7 +132,6 @@ class _EditProfileForm extends ConsumerStatefulWidget {
 class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
   late final TextEditingController _nameController;
   late final TextEditingController _emailController;
-  late final TextEditingController _lifeExpController;
   DateTime? _dob;
 
   @override
@@ -138,9 +139,6 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
     super.initState();
     _nameController = TextEditingController(text: widget.user.name);
     _emailController = TextEditingController(text: widget.user.email);
-    _lifeExpController = TextEditingController(
-      text: widget.user.lifeExpectancyYears.toString(),
-    );
     _dob = widget.user.dob;
   }
 
@@ -148,7 +146,6 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
   void dispose() {
     _nameController.dispose();
     _emailController.dispose();
-    _lifeExpController.dispose();
     super.dispose();
   }
 
@@ -187,14 +184,6 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
               TextButton(onPressed: _pickDob, child: const Text('Pick DOB')),
             ],
           ),
-          const SizedBox(height: 8),
-          TextField(
-            controller: _lifeExpController,
-            keyboardType: TextInputType.number,
-            decoration: const InputDecoration(
-              labelText: 'Life expectancy (years)',
-            ),
-          ),
           const SizedBox(height: 12),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
@@ -227,19 +216,22 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
   Future<void> _save() async {
     final name = _nameController.text.trim();
     final email = _emailController.text.trim();
-    final lifeExp =
-        int.tryParse(_lifeExpController.text) ??
-        widget.user.lifeExpectancyYears;
 
     final updated = UserModel(
       id: widget.user.id.isNotEmpty ? widget.user.id : 'anon',
       name: name.isNotEmpty ? name : widget.user.name,
       email: email.isNotEmpty ? email : widget.user.email,
       dob: _dob,
-      lifeExpectancyYears: lifeExp,
+      lifeExpectancyYears: widget.user.lifeExpectancyYears, // Keep original in UserModel, UI uses UserData
     );
 
     await saveUser(updated);
+
+    // Sync the updated DOB into the dynamic UserDataNotifier
+    ref.read(userDataProvider.notifier).updateUserData(
+      ref.read(userDataProvider).copyWith(dob: _dob),
+    );
+
     // Dismiss sheet
     if (mounted) Navigator.of(context).pop();
   }

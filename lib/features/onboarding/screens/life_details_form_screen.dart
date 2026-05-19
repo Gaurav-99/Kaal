@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/providers/user_provider.dart';
+import '../../../core/providers/user_data_provider.dart';
+import '../../../models/user_data.dart';
 
 class LifeDetailsFormScreen extends ConsumerStatefulWidget {
   const LifeDetailsFormScreen({super.key});
@@ -72,23 +74,26 @@ class _LifeDetailsFormScreenState extends ConsumerState<LifeDetailsFormScreen> {
       return;
     }
 
-    double expectedLifespan = 80.0;
-    if (_selectedGender == 'Female') expectedLifespan += 4;
-    if (_sleepHours >= 7 && _sleepHours <= 8.5) expectedLifespan += 2;
-    else if (_sleepHours < 5) expectedLifespan -= 3;
-    if (_stressLevel > 7) expectedLifespan -= 4;
-    else if (_stressLevel < 4) expectedLifespan += 2;
-    if (_activityLevel == 'Active' || _activityLevel == 'Very Active') expectedLifespan += 4;
-    else if (_activityLevel == 'Sedentary') expectedLifespan -= 3;
-    
-    expectedLifespan = expectedLifespan.clamp(60.0, 100.0);
+    final userData = UserData(
+      dob: _selectedDOB,
+      gender: _selectedGender,
+      height: double.tryParse(_heightController.text) ?? 175.0,
+      weight: double.tryParse(_weightController.text) ?? 70.0,
+      sleepHours: _sleepHours,
+      stressLevel: _stressLevel,
+      activityLevel: _activityLevel,
+    );
+
+    // Update dynamic provider which will handle the calculations
+    ref.read(userDataProvider.notifier).updateUserData(userData);
+    final calculatedLifespan = ref.read(userDataProvider).expectedLifespanYears;
 
     final user = UserModel(
       id: 'user_${DateTime.now().millisecondsSinceEpoch}',
       name: 'Seeker',
       email: '',
       dob: _selectedDOB,
-      lifeExpectancyYears: expectedLifespan.round(),
+      lifeExpectancyYears: calculatedLifespan,
     );
 
     try {
