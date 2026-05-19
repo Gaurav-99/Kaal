@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../life_calendar/screens/life_calendar_screen.dart';
+import '../../profile/screens/profile_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -18,7 +19,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     const _HomeTab(),
     const LifeCalendarScreen(),
     const Center(child: Text("Reflection")),
-    const Center(child: Text("Profile")),
+    const ProfileScreen(),
   ];
 
   @override
