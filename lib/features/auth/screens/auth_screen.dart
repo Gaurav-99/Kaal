@@ -22,8 +22,8 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 
   void _continueAsGuest() {
-    // Skip to the life expectancy questionnaire or dashboard
-    context.go('/dashboard');
+    // Navigate to the life expectancy questionnaire
+    context.go('/life_details');
   }
 
   @override
@@ -33,11 +33,9 @@ class _AuthScreenState extends State<AuthScreen> {
         children: [
           // Background Gradient
           Container(
-            decoration: const BoxDecoration(
-              gradient: AppColors.cosmicGradient,
-            ),
+            decoration: const BoxDecoration(gradient: AppColors.cosmicGradient),
           ),
-          
+
           // Soft Glow Effects
           Positioned(
             top: -100,
@@ -47,7 +45,7 @@ class _AuthScreenState extends State<AuthScreen> {
               height: 300,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: AppColors.primary.withOpacity(0.15),
+                color: AppColors.primary.withAlpha((0.15 * 255).round()),
               ),
               child: BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 50, sigmaY: 50),
@@ -55,7 +53,7 @@ class _AuthScreenState extends State<AuthScreen> {
               ),
             ),
           ),
-          
+
           SafeArea(
             child: Center(
               child: SingleChildScrollView(
@@ -66,9 +64,8 @@ class _AuthScreenState extends State<AuthScreen> {
                   children: [
                     Text(
                       'Welcome to Kaal.',
-                      style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                        fontWeight: FontWeight.w300,
-                      ),
+                      style: Theme.of(context).textTheme.displayMedium
+                          ?.copyWith(fontWeight: FontWeight.w300),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 8),
@@ -81,7 +78,7 @@ class _AuthScreenState extends State<AuthScreen> {
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 48),
-                    
+
                     // Glassmorphic Form Container
                     ClipRRect(
                       borderRadius: BorderRadius.circular(24),
@@ -90,10 +87,12 @@ class _AuthScreenState extends State<AuthScreen> {
                         child: Container(
                           padding: const EdgeInsets.all(24),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.03),
+                            color: Colors.white.withAlpha((0.03 * 255).round()),
                             borderRadius: BorderRadius.circular(24),
                             border: Border.all(
-                              color: Colors.white.withOpacity(0.1),
+                              color: Colors.white.withAlpha(
+                                (0.1 * 255).round(),
+                              ),
                               width: 1,
                             ),
                           ),
@@ -113,7 +112,9 @@ class _AuthScreenState extends State<AuthScreen> {
                               ),
                               const SizedBox(height: 24),
                               ElevatedButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  context.go('/life_details');
+                                },
                                 style: ElevatedButton.styleFrom(
                                   minimumSize: const Size(double.infinity, 56),
                                 ),
@@ -125,16 +126,20 @@ class _AuthScreenState extends State<AuthScreen> {
                       ),
                     ),
                     const SizedBox(height: 24),
-                    
+
                     // Google & Guest Options
                     OutlinedButton.icon(
-                      onPressed: () {},
+                      onPressed: () {
+                        context.go('/life_details');
+                      },
                       icon: const Icon(Icons.g_mobiledata, size: 28),
                       label: const Text('Continue with Google'),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: AppColors.textPrimary,
                         minimumSize: const Size(double.infinity, 56),
-                        side: BorderSide(color: Colors.white.withOpacity(0.2)),
+                        side: BorderSide(
+                          color: Colors.white.withAlpha((0.2 * 255).round()),
+                        ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -174,7 +179,7 @@ class _AuthScreenState extends State<AuthScreen> {
         hintStyle: const TextStyle(color: AppColors.textMuted),
         prefixIcon: Icon(icon, color: AppColors.textMuted),
         filled: true,
-        fillColor: Colors.black.withOpacity(0.2),
+        fillColor: Colors.black.withAlpha((0.2 * 255).round()),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide.none,
@@ -185,7 +190,9 @@ class _AuthScreenState extends State<AuthScreen> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: AppColors.primary.withOpacity(0.5)),
+          borderSide: BorderSide(
+            color: AppColors.primary.withAlpha((0.5 * 255).round()),
+          ),
         ),
       ),
     );

@@ -29,7 +29,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         decoration: BoxDecoration(
           border: Border(
             top: BorderSide(
-              color: AppColors.surfaceLight.withOpacity(0.5),
+              color: AppColors.surfaceLight.withAlpha((0.5 * 255).round()),
               width: 0.5,
             ),
           ),
@@ -95,10 +95,8 @@ class _HomeTab extends StatelessWidget {
                     ),
                     Text(
                       'Seeker.',
-                      style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w500,
-                      ),
+                      style: Theme.of(context).textTheme.displayMedium
+                          ?.copyWith(fontSize: 24, fontWeight: FontWeight.w500),
                     ),
                   ],
                 ),
@@ -117,7 +115,7 @@ class _HomeTab extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 40),
-            
+
             // Life Progress Widget
             Center(
               child: Stack(
@@ -130,7 +128,9 @@ class _HomeTab extends StatelessWidget {
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: AppColors.primary.withOpacity(0.1),
+                          color: AppColors.primary.withAlpha(
+                            (0.1 * 255).round(),
+                          ),
                           blurRadius: 30,
                           spreadRadius: 10,
                         ),
@@ -149,10 +149,11 @@ class _HomeTab extends StatelessWidget {
                       children: [
                         Text(
                           '28%',
-                          style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                            color: AppColors.primary,
-                            fontWeight: FontWeight.w300,
-                          ),
+                          style: Theme.of(context).textTheme.displayLarge
+                              ?.copyWith(
+                                color: AppColors.primary,
+                                fontWeight: FontWeight.w300,
+                              ),
                         ),
                         const SizedBox(height: 4),
                         Text(
@@ -166,13 +167,13 @@ class _HomeTab extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 40),
-            
+
             // Today's Insight
             Text(
               'Insight',
-              style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                color: AppColors.textSecondary,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.labelLarge?.copyWith(color: AppColors.textSecondary),
             ),
             const SizedBox(height: 12),
             Container(
@@ -202,7 +203,7 @@ class _HomeTab extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 32),
-            
+
             // Active Countdowns
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -215,9 +216,9 @@ class _HomeTab extends StatelessWidget {
                 ),
                 Text(
                   'See All',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: AppColors.primary,
-                  ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(color: AppColors.primary),
                 ),
               ],
             ),
@@ -226,7 +227,11 @@ class _HomeTab extends StatelessWidget {
               context,
               'Parents\' Anniversary',
               'in 14 days',
-              FontAwesomeIcons.heart,
+              const FaIcon(
+                FontAwesomeIcons.heart,
+                color: AppColors.accent,
+                size: 20,
+              ),
               0.8,
             ),
             const SizedBox(height: 12),
@@ -234,7 +239,11 @@ class _HomeTab extends StatelessWidget {
               context,
               'Next Full Moon',
               'in 5 days',
-              FontAwesomeIcons.moon,
+              const FaIcon(
+                FontAwesomeIcons.moon,
+                color: AppColors.accent,
+                size: 20,
+              ),
               0.9,
             ),
           ],
@@ -244,7 +253,12 @@ class _HomeTab extends StatelessWidget {
   }
 
   Widget _buildCountdownCard(
-      BuildContext context, String title, String subtitle, IconData icon, double progress) {
+    BuildContext context,
+    String title,
+    String subtitle,
+    Widget iconWidget,
+    double progress,
+  ) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -260,11 +274,7 @@ class _HomeTab extends StatelessWidget {
               color: AppColors.background,
               borderRadius: BorderRadius.circular(12),
             ),
-            child: FaIcon(
-              icon,
-              color: AppColors.accent,
-              size: 20,
-            ),
+            child: iconWidget,
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -273,15 +283,12 @@ class _HomeTab extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    fontWeight: FontWeight.w500,
-                  ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w500),
                 ),
                 const SizedBox(height: 4),
-                Text(
-                  subtitle,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
+                Text(subtitle, style: Theme.of(context).textTheme.bodyMedium),
               ],
             ),
           ),

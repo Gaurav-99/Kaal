@@ -10,18 +10,24 @@ class LifeCalendarScreen extends StatelessWidget {
     // Let's mock the user is 25 years old.
     final int totalWeeks = 90 * 52;
     final int weeksLived = 25 * 52;
-    
+
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('Life in Weeks', style: TextStyle(fontWeight: FontWeight.w300)),
+        title: const Text(
+          'Life in Weeks',
+          style: TextStyle(fontWeight: FontWeight.w300),
+        ),
       ),
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 24.0,
+                vertical: 16.0,
+              ),
               child: Text(
                 'Each square represents one week of a 90-year life.',
                 style: Theme.of(context).textTheme.bodyMedium,
@@ -43,16 +49,22 @@ class LifeCalendarScreen extends StatelessWidget {
                   itemBuilder: (context, index) {
                     bool isLived = index < weeksLived;
                     bool isCurrent = index == weeksLived;
-                    
+
                     return Container(
                       decoration: BoxDecoration(
-                        color: isCurrent 
-                            ? AppColors.primary 
-                            : (isLived ? AppColors.surfaceLight : AppColors.background),
+                        color: isCurrent
+                            ? AppColors.primary
+                            : (isLived
+                                  ? AppColors.surfaceLight
+                                  : AppColors.background),
                         border: Border.all(
-                          color: isCurrent 
-                              ? AppColors.primary 
-                              : (isLived ? Colors.transparent : AppColors.surfaceLight.withOpacity(0.3)),
+                          color: isCurrent
+                              ? AppColors.primary
+                              : (isLived
+                                    ? Colors.transparent
+                                    : AppColors.surfaceLight.withAlpha(
+                                        (0.3 * 255).round(),
+                                      )),
                           width: 0.5,
                         ),
                       ),

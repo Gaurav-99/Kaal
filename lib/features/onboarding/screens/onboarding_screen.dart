@@ -16,19 +16,19 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   final List<Map<String, String>> _onboardingData = [
     {
       "title": "Time is your most\nvaluable resource.",
-      "subtitle": "Yet, it's the one we often take for granted."
+      "subtitle": "Yet, it's the one we often take for granted.",
     },
     {
       "title": "You are living a finite\nnumber of weeks.",
-      "subtitle": "Visualizing your life brings clarity to what matters."
+      "subtitle": "Visualizing your life brings clarity to what matters.",
     },
     {
       "title": "Awareness creates\nintention.",
-      "subtitle": "Stop drifting. Start choosing how you spend your days."
+      "subtitle": "Stop drifting. Start choosing how you spend your days.",
     },
     {
       "title": "Kaal helps you see\nyour life differently.",
-      "subtitle": "A calm, philosophical approach to intentional living."
+      "subtitle": "A calm, philosophical approach to intentional living.",
     },
   ];
 
@@ -45,11 +45,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         children: [
           // Background Gradient
           Container(
-            decoration: const BoxDecoration(
-              gradient: AppColors.cosmicGradient,
-            ),
+            decoration: const BoxDecoration(gradient: AppColors.cosmicGradient),
           ),
-          
+
           // Content
           SafeArea(
             child: Column(
@@ -80,7 +78,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                   shape: BoxShape.circle,
                                   gradient: RadialGradient(
                                     colors: [
-                                      AppColors.primary.withOpacity(0.5),
+                                      AppColors.primary.withAlpha(
+                                        (0.5 * 255).round(),
+                                      ),
                                       Colors.transparent,
                                     ],
                                   ),
@@ -92,7 +92,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
                                       border: Border.all(
-                                        color: AppColors.primary.withOpacity(0.3),
+                                        color: AppColors.primary.withAlpha(
+                                          (0.3 * 255).round(),
+                                        ),
                                         width: 1,
                                       ),
                                     ),
@@ -103,18 +105,20 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             const SizedBox(height: 60),
                             Text(
                               _onboardingData[index]["title"]!,
-                              style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                                fontWeight: FontWeight.w300,
-                                height: 1.2,
-                              ),
+                              style: Theme.of(context).textTheme.displayMedium
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.w300,
+                                    height: 1.2,
+                                  ),
                             ),
                             const SizedBox(height: 24),
                             Text(
                               _onboardingData[index]["subtitle"]!,
-                              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                color: AppColors.textSecondary,
-                                fontWeight: FontWeight.w300,
-                              ),
+                              style: Theme.of(context).textTheme.bodyLarge
+                                  ?.copyWith(
+                                    color: AppColors.textSecondary,
+                                    fontWeight: FontWeight.w300,
+                                  ),
                             ),
                           ],
                         ),
@@ -122,7 +126,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     },
                   ),
                 ),
-                
+
                 // Bottom Controls
                 Padding(
                   padding: const EdgeInsets.all(40.0),
@@ -147,7 +151,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           ),
                         ),
                       ),
-                      
+
                       // Next / Start Button
                       GestureDetector(
                         onTap: () {
@@ -162,9 +166,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         },
                         child: Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 24, vertical: 12),
+                            horizontal: 24,
+                            vertical: 12,
+                          ),
                           decoration: BoxDecoration(
-                            border: Border.all(color: AppColors.primary.withOpacity(0.5)),
+                            border: Border.all(
+                              color: AppColors.primary.withAlpha(
+                                (0.5 * 255).round(),
+                              ),
+                            ),
                             borderRadius: BorderRadius.circular(30),
                           ),
                           child: Text(
