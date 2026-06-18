@@ -10,7 +10,6 @@ class ProfileScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final asyncUser = ref.watch(userProvider);
-    final userData = ref.watch(userDataProvider);
 
     return Scaffold(
       backgroundColor: AppColors.background,
